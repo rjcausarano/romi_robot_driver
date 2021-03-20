@@ -22,7 +22,6 @@
 #include "commander.h"
 
 void toggle_led(){
-    __delay_ms(5000);
     RD1 = !RD1;
 }
 
@@ -30,6 +29,7 @@ void setup(){
     TRISD1 = 0;
     RD1 = 0;
     config_bt(1, 4);
+    add_callback("LED", toggle_led);
 }
 
 void __interrupt() int_routine(void){

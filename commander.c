@@ -1,27 +1,29 @@
 #include "commander.h"
 #include "string_macros.h"
 
-#include "bt.h"
-
 void reset_cmd(){
-    memset(command, '\0', sizeof(command));
-    bytes = 0;
+    memset(command_, '\0', sizeof(command_));
+    bytes_ = 0;
+}
+
+void add_callback(char* command, void (* callback)()){
+    strcpy(commands_[cb_num_], command);
+    callbacks_[cb_num_] = callback;
+    cb_num_++;
 }
 
 void process_char(unsigned char dat){
-    command[bytes] = dat;
-    bytes++;
-    if(bytes == COMMAND_LEN){
-        if(strings_eq(command, "Gret\0"))
-            write_bt("Hello there!");
-        else if(strings_eq(command, "Bark"))
-            write_bt("whoof whoof\0");
-        else if(strings_eq(command, "Exit"))
-            write_bt("Good bye!\0");
-        else if(strings_eq(command, "Togl")){
-            RD2 = !RD2;
-            write_bt("toggled!\0");
+    command_[bytes_] = dat;
+    bytes_++;
+    if(bytes_ == COMMAND_LEN){
+        // find the command and call its callback function
+        for(unsigned char i = 0 ; i < cb_num_ ; i++){
+            if(strings_eq(command_, commands_[i])){
+                callbacks_[i]();
+                break;
+            }
         }
+        
         reset_cmd();
     }
 }
