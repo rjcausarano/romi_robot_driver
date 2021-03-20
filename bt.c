@@ -2,7 +2,7 @@
 #include <string.h>
 #include "string_macros.h"
 
-void config_bt(char high_speed, char spbrg){
+void config_bt(unsigned char high_speed, char spbrg){
     // RC6 and RC7 as inputs
     TRISD6 = 1;
     TRISD7 = 1;
@@ -11,7 +11,7 @@ void config_bt(char high_speed, char spbrg){
     // enable serial
     SYNC = 0;
     SPEN = 1;
-    // no interrupts
+    // interrupts
     GIE = 1;
     PEIE = 1;
     TXIE = 0;
