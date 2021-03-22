@@ -13,6 +13,7 @@ extern "C" {
 #endif
 
 #include<xc.h>
+    
 void config_bt(unsigned char high_speed, char spbrg);
 char data_received_bt();
 char data_transmited_bt();

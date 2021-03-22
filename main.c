@@ -20,15 +20,30 @@
 #include <xc.h>
 #include "bt.h"
 #include "commander.h"
+#include "pwm.h"
+
 
 void toggle_led(){
     RD1 = !RD1;
+}
+
+void low_pwm(){
+    set_duty_percent(0);
+}
+
+void med_pwm(){
+    set_duty_percent(50);
+}
+
+void high_pwm(){
+    set_duty_percent(100);
 }
 
 void setup(){
     TRISD1 = 0;
     RD1 = 0;
     config_bt(1, 4);
+    setup_pwm();
     add_callback("LED", toggle_led);
 }
 
@@ -36,6 +51,7 @@ void __interrupt() int_routine(void){
     if(RCIF){
         unsigned char dat = read_bt();
         process_char(dat);
+        set_duty_percent(dat);
     }
 }
 
