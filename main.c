@@ -22,36 +22,46 @@
 #include "commander.h"
 #include "pwm.h"
 
-
 void toggle_led(){
     RD1 = !RD1;
 }
 
-void low_pwm(){
-    set_duty_percent(0);
+void set_led(unsigned char on_off){
+    RD1 = on_off;
 }
 
-void med_pwm(){
-    set_duty_percent(50);
+void setup_led(){
+    TRISD1 = 0;
+    RD1 = 0;
 }
 
-void high_pwm(){
-    set_duty_percent(100);
+void toggle_dir(){
+    RC3 = !RC3;
+}
+
+void set_dir(unsigned char fw_bw){
+    RC3 = fw_bw;
+}
+
+void setup_dir(){
+    TRISC3 = 0;
+    RC3 = 0;
 }
 
 void setup(){
-    TRISD1 = 0;
-    RD1 = 0;
+    setup_led();
+    setup_dir();
     config_bt(1, 4);
     setup_pwm();
-    add_callback("LED", toggle_led);
+    add_callback("LED", set_led);
+    add_callback("DIR", set_dir);
+    add_callback("PWM", set_duty_percent);
 }
 
 void __interrupt() int_routine(void){
     if(RCIF){
         unsigned char dat = read_bt();
         process_char(dat);
-        set_duty_percent(dat);
     }
 }
 
