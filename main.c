@@ -18,7 +18,7 @@
 #define _XTAL_FREQ 2983056
 
 #include <xc.h>
-#include "bt.h"
+#include "uart.h"
 #include "commander.h"
 #include "pwm.h"
 
@@ -51,7 +51,7 @@ void setup_dir(){
 void setup(){
     setup_led();
     setup_dir();
-    config_bt(1, 4);
+    config_uart(1, 4);
     setup_pwm();
     add_callback("LED", set_led);
     add_callback("DIR", set_dir);
@@ -60,7 +60,7 @@ void setup(){
 
 void __interrupt() int_routine(void){
     if(RCIF){
-        unsigned char dat = read_bt();
+        unsigned char dat = read_uart();
         process_char(dat);
     }
 }
