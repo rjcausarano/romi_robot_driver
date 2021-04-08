@@ -17,16 +17,20 @@
 
 #define _XTAL_FREQ 2983056
 #define _SLAVE_ADDRESS 4
+#define LED_COMMAND 5
 
 #include <xc.h>
 #include "pic_libs/pwm.h"
 #include "pic_libs/i2c.h"
 
+char bytes_received[2] = {0};
+char byte_index = 0;
+
 void toggle_led(){
     RD1 = !RD1;
 }
 
-void set_led(unsigned char on_off){
+void set_led(char on_off){
     RD1 = on_off;
 }
 
@@ -39,7 +43,7 @@ void toggle_dir(){
     RC3 = !RC3;
 }
 
-void set_dir(unsigned char fw_bw){
+void set_dir(char fw_bw){
     RC3 = fw_bw;
 }
 
@@ -48,14 +52,25 @@ void setup_dir(){
     RC3 = 0;
 }
 
+void process_data(){
+    if(bytes_received[0] == LED_COMMAND){
+        set_led(bytes_received[1]);
+    }
+}
+
+void on_byte_received(char byte){
+    bytes_received[byte_index] = byte;
+    byte_index++;
+    if(byte_index >= 2){
+        byte_index = 0;
+        process_data();
+    }
+}
+
 void setup(){
     setup_led();
-    setup_dir();
-    setup_i2c(0, _SLAVE_ADDRESS); // slave on address
-    //setup_pwm();
-    //add_callback("LED", set_led);
-    //add_callback("DIR", set_dir);
-    //add_callback("PWM", set_duty_percent);
+    //setup_dir();
+    setup_i2c(0, _SLAVE_ADDRESS, on_byte_received); // slave on address
 }
 
 void __interrupt() int_routine(void){
