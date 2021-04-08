@@ -15,10 +15,10 @@ extern "C" {
 #include<xc.h>
     
 void setup_i2c(char master, char address);
+char process_interrupt_i2c();
 void write_byte_i2c(char data);
-char read_byte_i2c();
-char is_byte_data();
-char is_read_instruction();
+char bytes_received_i2c();
+char get_byte_i2c(char index);
 
 
 #ifdef	__cplusplus

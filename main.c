@@ -16,7 +16,7 @@
 #pragma config CP = OFF         // Flash Program Memory Code Protection bit (Code protection off)
 
 #define _XTAL_FREQ 2983056
-#define _SLAVE_ADDRESS 1
+#define _SLAVE_ADDRESS 4
 
 #include <xc.h>
 #include "commander.h"
@@ -52,35 +52,16 @@ void setup_dir(){
 void setup(){
     setup_led();
     setup_dir();
-    // setup_uart(1, 4); Now using I2C instead
-    setup_i2c(0, _SLAVE_ADDRESS); // slave on address 0x01
-    setup_pwm();
+    setup_i2c(0, _SLAVE_ADDRESS); // slave on address
+    //setup_pwm();
     add_callback("LED", set_led);
-    add_callback("DIR", set_dir);
-    add_callback("PWM", set_duty_percent);
+    //add_callback("DIR", set_dir);
+    //add_callback("PWM", set_duty_percent);
 }
 
-char requested_data = 0;
-
 void __interrupt() int_routine(void){
-    if(RCIF){ // received data through UART
-        unsigned char dat = read_uart();
-        process_char(dat);
-    } else if (SSPIF){ // received data through i2c
-        char data = read_byte_i2c();
-        if(is_byte_data){
-            if(is_read_instruction()){
-                // send the data specified by requested_data
-                // write_byte_i2c(<requested data goes here>);
-            } else{
-                // we are receiving data. Most often this is the requested data
-                // in a following read instruction
-                requested_data = data;
-            }
-        } else {
-            // do address processing if required
-        }
-        SSPIF = 0;
+    if (SSPIF){ // received data through i2c
+        process_interrupt_i2c();
     }
 }
 
