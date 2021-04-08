@@ -19,9 +19,8 @@
 #define _SLAVE_ADDRESS 4
 
 #include <xc.h>
-#include "commander.h"
-#include "pwm.h"
-#include "i2c.h"
+#include "pic_libs/pwm.h"
+#include "pic_libs/i2c.h"
 
 void toggle_led(){
     RD1 = !RD1;
@@ -54,7 +53,7 @@ void setup(){
     setup_dir();
     setup_i2c(0, _SLAVE_ADDRESS); // slave on address
     //setup_pwm();
-    add_callback("LED", set_led);
+    //add_callback("LED", set_led);
     //add_callback("DIR", set_dir);
     //add_callback("PWM", set_duty_percent);
 }
